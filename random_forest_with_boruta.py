@@ -80,7 +80,7 @@ cat_cols = X.select_dtypes(include = ["category","object"]).columns.tolist()
 X = encode_label_categorical_cols(training_data = X_train, new_data = X, cols_to_encode=cat_cols)
 
 # Feature selection by Boruta
-rf_model = RandomForestRegressor(n_estimators=1000, oob_score= True,max_features  = 4)
+rf_model = RandomForestRegressor(n_estimators=1000, oob_score= True,max_features  = 5)
 feat_selector = bp(rf_model,n_estimators = 'auto', verbose= 1,max_iter= 1000)
 feat_selector.fit(X.values, y.values)
 
