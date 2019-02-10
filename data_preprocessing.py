@@ -166,13 +166,8 @@ class data_preprocessing:
         #X_test[psuedo_num_cols] = X_test[psuedo_num_cols].applymap(str)
         X_test = self.impute_data_using_train_data(X_train,X_test,columnsTitles)
         
-        skewed_feats = X_test[numeric_feats].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
-        skew_val = pd.DataFrame({'Skew' :skewed_feats})
-        skew_val = skew_val[abs(skew_val.Skew) > 0.75]
-        skewed_features = skew_val.index
-        lam = 0.15
         for sf in skewed_features:
-            X_test[sf] = boxcox1p(X[sf], lam)
+            X_test[sf] = boxcox1p(X_test[sf], lam)
 
         X_test['ExterQual'] = X_test['ExterQual'].map({'Ex': 4, 'Gd': 3, 'TA': 2, 'Fa': 1, 'Po': 0})
         X_test['ExterCond'] = X_test['ExterCond'].map({'Ex': 4, 'Gd': 3, 'TA': 2, 'Fa': 1, 'Po': 0})
