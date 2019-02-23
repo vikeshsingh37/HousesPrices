@@ -7,6 +7,7 @@ from numpy import nanmedian
 from sklearn.preprocessing import OneHotEncoder
 from scipy.stats import skew
 from scipy.special import boxcox1p
+from pyod.models.knn import KNN 
 
 class data_preprocessing:
     def __init__(self,train_data_file, test_data_file):
@@ -112,6 +113,19 @@ class data_preprocessing:
             sys.exit()
             
         numeric_feats = X.dtypes[X.dtypes != "object"].index
+        
+        # Remove outliers
+        clf = KNN()
+        clf.fit(np.array(X.drop(cat_cols, axis = 1)))
+        y_train_pred = clf.labels_.tolist()
+
+        outlier_index = [i for i,val in enumerate(y_train_pred) if val ==1]
+        X = X.drop(X.index[outlier_index])
+        y = y.drop(y.index[outlier_index])
+        X.reset_index(drop=True,inplace = True)
+        y.reset_index(drop=True,inplace =True)
+        
+        print(str(len(outlier_index)) + " rows removed in training data as outliers")
 
         # Fix skewed numerical features
         skewed_feats = X[numeric_feats].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
